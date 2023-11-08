@@ -1,0 +1,10 @@
+# client-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: client-pod
+spec:
+  containers:
+  - name: client
+    image: busybox:latest
+    command: ["sh", "-c", "while true; do wget -qO- server-service; sleep 5; done"]

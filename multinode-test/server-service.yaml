@@ -1,0 +1,13 @@
+# server-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-service
+spec:
+  selector:
+    app: server
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: NodePort
