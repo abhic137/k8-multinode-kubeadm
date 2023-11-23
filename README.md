@@ -278,7 +278,9 @@ We now want to initialize the machine that will run the control plane components
 
 Pull container images:
 ```
-$ sudo kubeadm config images pull
+$ sudo kubeadm config images pull --v=5
+ 
+
 [config/images] Pulled registry.k8s.io/kube-apiserver:v1.28.0
 [config/images] Pulled registry.k8s.io/kube-controller-manager:v1.28.0
 [config/images] Pulled registry.k8s.io/kube-scheduler:v1.28.0
