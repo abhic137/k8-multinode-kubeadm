@@ -3,7 +3,7 @@
 This readme provides step-by-step instructions for setting up a multi-node Kubernetes cluster using Kubeadm. 
 ```VIDEO REF:``` https://www.youtube.com/watch?v=6_i1hXXviHw&t=313s
 ``` REF:``` https://computingforgeeks.com/install-kubernetes-cluster-ubuntu-jammy/
-
+``` REF:``` https://medium.com/@mrdevsecops/set-up-a-kubernetes-cluster-with-kubeadm-508db74028ce
 ## Overview
 This guide provides detailed instructions for setting up a multi-node Kubernetes cluster using Kubeadm. The guide includes instructions for installing and configuring containerd and Kubernetes, disabling swap, initializing the cluster, installing Flannel, and joining nodes to the cluster.
 
