@@ -436,3 +436,10 @@ k8s-worker02.computingforgeeks.com   Ready    <none>   12s   v1.26.1
 ```
 $ kubectl get nodes -o wide
 ```
+# For removing the nodes
+
+```
+kubectl drain <your-node-name> --delete-local-data --force --ignore-daemonsets
+kubectl delete node <your-node-name>
+sudo kubeadm reset
+```
