@@ -1,5 +1,5 @@
 # k8-multinode-kubeadm
-# Multi-Node Kubernetes Cluster Setup Using Kubeadm
+# Multi-Node Kubernetes Cluster Setup Using Kubeadm Using Containerd Runtime
 This readme provides step-by-step instructions for setting up a multi-node Kubernetes cluster using Kubeadm. 
 ```VIDEO REF:``` https://www.youtube.com/watch?v=6_i1hXXviHw&t=313s
 ``` REF:``` https://computingforgeeks.com/install-kubernetes-cluster-ubuntu-jammy/
@@ -130,3 +130,84 @@ To add nodes to the cluster, run the kubeadm join command with the appropriate a
 ## Important Links
 https://www.youtube.com/watch?v=pcADx8JFUIA
 https://www.youtube.com/watch?v=Zxozz8P_l5M
+
+# Multi-Node Kubernetes Cluster Setup Using Kubeadm Using Docker CE Runtime
+## 1. Upgrade your Ubuntu servers
+
+Provision the servers to be used in the deployment of Kubernetes on Ubuntu 22.04. The setup process will vary depending on the virtualization or cloud environment you’re using.
+
+Once the servers are ready, update them.
+```
+sudo apt update
+sudo apt -y full-upgrade
+[ -f /var/run/reboot-required ] && sudo reboot -f
+```
+## 2. Install kubelet, kubeadm and kubectl
+
+Once the servers are rebooted, add Kubernetes repository for Ubuntu 22.04 to all the servers.
+```
+sudo apt install curl apt-transport-https -y
+curl -fsSL  https://packages.cloud.google.com/apt/doc/apt-key.gpg|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/k8s.gpg
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+```
+Then install required packages.
+```
+sudo apt update
+sudo apt install wget curl vim git kubelet kubeadm kubectl -y
+sudo apt-mark hold kubelet kubeadm kubectl
+```
+Confirm installation by checking the version of kubectl.
+```
+$ kubectl version --client
+Client Version: v1.28.0
+Kustomize Version: v5.0.4-0.20230601165947-6ce0bf390ce3
+
+$ kubeadm version
+kubeadm version: &version.Info{Major:"1", Minor:"28", GitVersion:"v1.28.0", GitCommit:"855e7c48de7388eb330da0f8d9d2394ee818fb8d", GitTreeState:"clean", BuildDate:"2023-08-15T10:20:15Z", GoVersion:"go1.20.7", Compiler:"gc", Platform:"linux/amd64"}
+```
+## 3. Disable Swap Space
+
+Disable all swaps from /proc/swaps.
+```
+sudo swapoff -a 
+```
+Check if swap has been disabled by running the free command.
+```
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           7.7Gi       283Mi       5.9Gi       1.0Mi       1.5Gi       7.2Gi
+Swap:             0B          0B          0B
+```
+Now disable Linux swap space permanently in /etc/fstab. Search for a swap line and add # (hashtag) sign in front of the line.
+```
+sudo sed -i.bak -r 's/(.+ swap .+)/#\1/' /etc/fstab
+```
+Or manually edit.
+```
+$ sudo vim /etc/fstab
+#/swap.img	none	swap	sw	0	0
+```
+Confirm setting is correct
+```
+sudo mount -a
+free -h
+```
+Enable kernel modules and configure sysctl.
+
+## Enable kernel modules
+```
+sudo modprobe overlay
+sudo modprobe br_netfilter
+```
+## Add some settings to sysctl
+```
+sudo tee /etc/sysctl.d/kubernetes.conf<<EOF
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+net.ipv4.ip_forward = 1
+EOF
+```
+## Reload sysctl
+```
+sudo sysctl --system
+```
