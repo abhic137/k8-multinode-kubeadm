@@ -60,6 +60,12 @@ Restart containerd:
 ```
 sudo systemctl restart containerd
 ```
+```OR```
+Using single command
+```
+sudo sed -i 's/\(SystemdCgroup\s*=\s*\)false/\1true/' /etc/containerd/config.toml && sudo cat /etc/containerd/config.toml
+
+```
 
 ## Install Kubernetes
 To install Kubernetes, use the following commands:
