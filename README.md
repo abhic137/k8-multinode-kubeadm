@@ -148,7 +148,7 @@ To add nodes to the cluster, run the kubeadm join command with the appropriate a
 ## Important Links
 https://www.youtube.com/watch?v=pcADx8JFUIA
 https://www.youtube.com/watch?v=Zxozz8P_l5M
-
+<!--
 # Multi-Node Kubernetes Cluster Setup Using Kubeadm Using Docker CE Runtime
 ## 1. Upgrade your Ubuntu servers
 
@@ -445,6 +445,7 @@ This node has joined the cluster:
 * Certificate signing request was sent to apiserver and a response was received.
 * The Kubelet was informed of the new secure connection details.
 ```
+ -->
 Run below command on the control-plane to see if the node joined the cluster.
 ```
 $ kubectl get nodes
@@ -463,3 +464,77 @@ kubectl drain <your-node-name> --delete-local-data --force --ignore-daemonsets
 kubectl delete node <your-node-name>
 sudo kubeadm reset
 ```
+# for debugging
+When a worker node is in the "NotReady" state, it means that it is not fully operational or not communicating properly with the control plane. To troubleshoot and resolve the issue, follow these steps:
+
+1. **Check Node Status:**
+   Run the following command to get more details about the worker node's status:
+
+   ```bash
+   kubectl describe node worker2
+   ```
+
+   Look for any events or conditions that indicate why the node is not ready.
+
+2. **Check Kubelet Logs:**
+   Examine the logs of the `kubelet` service on the worker node for any issues:
+
+   ```bash
+   journalctl -u kubelet -n 100 --no-pager
+   ```
+
+   Look for any error messages or indications of problems.
+
+3. **Restart Kubelet:**
+   Restart the `kubelet` service on the worker node:
+
+   ```bash
+   sudo systemctl restart kubelet
+   ```
+
+   After restarting, check the node status again:
+
+   ```bash
+   kubectl get nodes
+   ```
+
+4. **Check Networking:**
+   Ensure that there are no network-related issues preventing communication between the master and worker nodes. Check if you can ping the master node from the worker node and vice versa.
+
+5. **Check System Resources:**
+   Verify that the worker node has sufficient system resources (CPU, memory) available. Insufficient resources may lead to node instability.
+
+6. **Check for Node Conditions:**
+   Use the following command to check for any problematic conditions on the worker node:
+
+   ```bash
+   kubectl get nodes -o wide
+   ```
+
+   Look for any conditions that may provide more information on the node's status.
+
+7. **Rejoin the Node:**
+   If the issue persists, you can try rejoining the worker node to the cluster. On the master node, run the `kubeadm token create` command to generate a new token, and then use the `kubeadm join` command on the worker node:
+
+   ```bash
+   kubeadm token create --print-join-command
+   ```
+
+   Copy the output and run it on the worker node.
+
+8. **Check Node Events:**
+   Examine the events associated with the worker node:
+
+   ```bash
+   kubectl get events --field-selector involvedObject.name=worker2
+   ```
+
+   Look for any events that might provide insights into the node's condition.
+
+9. **Check for Disk Space Issues:**
+   Ensure that there is sufficient disk space available on the worker node. Disk space issues can impact the operation of the node.
+
+10. **Check for Outdated Components:**
+    Verify that all Kubernetes components (kubelet, kubeadm, kubectl) on the worker node are of the same version as those on the master node. Mismatched versions can lead to compatibility issues.
+
+After performing these steps, you should have a clearer understanding of the issue affecting the worker node. If the problem persists or you encounter specific error messages, please provide additional details for further assistance.
