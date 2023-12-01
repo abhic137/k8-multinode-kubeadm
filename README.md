@@ -24,8 +24,18 @@ Update the system's package list and install necessary dependencies using the fo
 sudo apt-get update
 sudo apt install apt-transport-https curl -y
 ```
-
-## Install containerd
+## Install Docker
+```
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
+apt-cache policy docker-ce
+sudo apt install docker-ce
+sudo usermod -aG docker ${USER}
+sudo systemctl status docker
+```
+<!--## Install containerd
 To install Containerd, use the following commands:
 
 ```
@@ -35,7 +45,7 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.
 sudo apt-get update
 sudo apt-get install containerd.io -y
 ```
-
+-->
 ## Create containerd configuration
 Next, create the containerd configuration file using the following commands:
 
