@@ -17,7 +17,7 @@ Before starting the installation process, ensure that the following prerequisite
 
 ## Installation Steps
 The following are the step-by-step instructions for setting up a multi-node Kubernetes cluster using Kubeadm:
-
+```YOU CAN EITHER RUN THIS COMMANDS MANUALLY OR USE ANSIBLE``` use this repo as Ref: https://github.com/abhic137/ansible-intro
 Update the system's package list and install necessary dependencies using the following commands:
 
 ```
