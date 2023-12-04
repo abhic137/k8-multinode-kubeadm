@@ -538,3 +538,64 @@ When a worker node is in the "NotReady" state, it means that it is not fully ope
     Verify that all Kubernetes components (kubelet, kubeadm, kubectl) on the worker node are of the same version as those on the master node. Mismatched versions can lead to compatibility issues.
 
 After performing these steps, you should have a clearer understanding of the issue affecting the worker node. If the problem persists or you encounter specific error messages, please provide additional details for further assistance.
+
+
+
+## If the PCs are Restarted
+The error message indicates the problem:
+
+```
+E1204 10:05:22.633134 2205 run.go:74] "command failed" err="failed to run Kubelet: running with swap on is not supported, please disable swap! or set --fail-swap-on flag"
+```
+
+The kubelet is failing to start because it detects that swap is enabled on the system, and running Kubernetes with swap enabled is not supported.
+
+To resolve this issue, you need to disable swap on your system. Follow these steps:
+
+1. Disable swap temporarily:
+
+    ```bash
+    sudo swapoff -a
+    ```
+
+2. Comment out the swap entry in the `/etc/fstab` file. Open the file using a text editor:
+
+    ```bash
+    sudo nano /etc/fstab
+    ```
+
+    Find the line that looks like:
+
+    ```bash
+    /swap.img   none    swap    sw    0   0
+    ```
+
+    Comment it out by adding a `#` at the beginning of the line:
+
+    ```bash
+    # /swap.img   none    swap    sw    0   0
+    ```
+
+    Save the file and exit the text editor.
+
+3. Reboot your system:
+
+    ```bash
+    sudo reboot
+    ```
+
+4. After the system reboots, check that swap is disabled:
+
+    ```bash
+    sudo swapon --show
+    ```
+
+    This command should not return any output, indicating that swap is disabled.
+
+5. Restart the kubelet:
+
+    ```bash
+    sudo systemctl restart kubelet
+    ```
+
+Check if the kubelet starts successfully now. If there are any other issues, please share the relevant logs, and I'll assist you further.
